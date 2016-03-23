@@ -1,0 +1,25 @@
+{
+    "LocalDependencies": [
+        "activate.lua",
+        "createhdffile.lua",
+        "createstartscript.lua",
+        "delete.lua",
+        "dir.lua",
+        "displayinstallstatus.lua",
+        "fetch.lua",
+        "installcron.lua"
+    ],
+    "LuaDependencies": [
+        "cron.edit",
+        "iguana.action",
+        "iguana.user",
+        "web.basicauth"
+    ],
+    "OtherDependencies": [],
+    "timestamp": "1458761885",
+    "version_info": {
+        "build": 0,
+        "major": 6,
+        "minor": 0
+    }
+}
