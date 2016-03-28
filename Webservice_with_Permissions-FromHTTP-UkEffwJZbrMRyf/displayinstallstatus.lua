@@ -58,14 +58,23 @@ Head back to the <a href="#DASHBOARD_URL">Iguana Dashboard</a>.
 local PlatformInfo = iguana.info()
 
 local ErrorMessage=[[
-Very sorry.  Only 64 bit Windows and Linux
-are supported with this utility unless you'd like to be brave and port it]]
+<p>
+Very sorry.  Only 64 bit Windows and Linux are supported with this utility unless you'd like to be brave and port it.  It's probably quite do-able
+since the 32 bit versions of Iguana on Windows and Linux are similar to the 64 bit version.
+</p>
+<p>
+The OS X DMG installer with Iguana 6 is really good though in terms of making
+it easy to upgrade so unlikely to be worth the effort - just use the standard OS X DMG installer
+from our website.
+</p>
+]]
 
 
 
 function display.status(R, A)
    if PlatformInfo.os ~= 'windows' and PlatformInfo.os ~= 'linux' or PlatformInfo.cpu ~= '64bit' then
-      error(ErrorMessage)
+      net.http.respond{body=ErrorMessage}
+      return
    end
          
    local Url
