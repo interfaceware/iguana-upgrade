@@ -20,6 +20,7 @@ fi
 
 function start.createScript(Version)
    local Dir = dir.applicationVersion(Version)
+   local RootDir = dir.root()
    local Content = StartScript
    Content = Content:gsub("#ROOT#", dir.root())
    local Command = "cd "..Dir.." && ./iguana_service"

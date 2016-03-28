@@ -15,6 +15,16 @@ local function DeleteDir(T)
          end
       end
    end
+   for Name, Info in os.fs.glob(Dir..'/.*') do
+      trace(Name)
+      if Info.isdir then
+         DeleteDir{dir=Name}
+      else
+         if not iguana.isTest() then
+            os.remove(Name)
+         end
+      end
+   end
    if not iguana.isTest() then
       os.fs.rmdir(Dir)
    end

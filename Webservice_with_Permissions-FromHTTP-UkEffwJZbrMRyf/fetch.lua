@@ -32,7 +32,7 @@ end
 
 local function DownloadAndUnpackTarball(Url, Version)
    -- I use curl to download the tar ball and expand it on the fly using a pipe.  
-   local Command = "curl "..Path.." | tar -zx --strip-components=1 -C "..dir.applicationVersion(Version)
+   local Command = "curl "..Url.." | tar -zx --strip-components=1 -C "..dir.applicationVersion(Version)
    trace(Command)
    if not iguana.isTest() then 
       os.execute(Command)

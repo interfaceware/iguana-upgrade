@@ -10,8 +10,8 @@
    <from_http
       type="mapper"
       guid="Webservice_with_Permissions-FromHTTP-UkEffwJZbrMRyf"
-      commit_id="21b21ab882ed38520a0e099fb36b43c26221c4c9"
-      commit_comment="Restart in 3 seconds."
+      commit_id="51f8f41e28cf7467eccda7144f114cb47b9d71f2"
+      commit_comment="Fixed start script."
       mapper_url_path="update/"/>
    <message_filter
       filter_after_logging="false"
