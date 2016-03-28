@@ -1,5 +1,7 @@
 local display = {}
 
+require 'iguana.info'
+
 -- This displays the main screen of the configuration management utility.
 
 local dir = require 'dir'
@@ -37,8 +39,7 @@ that has Admin privilleges to run a scheduled task to change the service to wind
 and it requires that user to be logged in etc.  Error checking is limited.
 </p>
 <p>
-You may experience headaches and other side effects when using this utility. Consult
-your physician in the case of any trouble.
+This utility is in ALPHA.  Don't use in production system yet.
 </p>
 <table>
 <tr><th>Version</th><th>Current</th><th>Downloaded</th><th>Remove</th><th>Activate</th></tr>
@@ -54,7 +55,19 @@ Head back to the <a href="#DASHBOARD_URL">Iguana Dashboard</a>.
 
 ]]
 
+local PlatformInfo = iguana.info()
+
+local ErrorMessage=[[
+Very sorry.  Only 64 bit Windows and Linux
+are supported with this utility unless you'd like to be brave and port it]]
+
+
+
 function display.status(R, A)
+   if PlatformInfo.os ~= 'windows' and PlatformInfo.os ~= 'linux' or PlatformInfo.cpu ~= '64bit' then
+      error(ErrorMessage)
+   end
+         
    local Url
    if dir.isWindows() then
       -- TODO

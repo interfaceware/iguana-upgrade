@@ -1,28 +1,18 @@
 local dir = {}
 
+require 'iguana.info'
+
+local Info = iguana.info()
+
 -- Common  routines that say where things are located, OS type etc.  We should be running under the
 -- home directory of the Iguana user we are using in Linux.
 
 function dir.isWindows()
-   if os.getenv('SYSTEMROOT') and os.getenv('SYSTEMROOT'):find('Windows') then
-      return true
-   end
-   return false
+   return Info.os == "windows"
 end
 
 function dir.is64Bit()
-   if dir.isWindows() then
-      if os.getenv('PROCESSOR_ARCHITECTURE') and 
-         os.getenv('PROCESSOR_ARCHITECTURE'):find('64') then
-         return true
-      else 
-         -- could be wrong!
-         return false
-      end
-   else
-      -- TODO for now assume all linux is 64 bit
-      return true
-   end
+   return Info.cpu == '64bit'
 end
 
 function dir.root()

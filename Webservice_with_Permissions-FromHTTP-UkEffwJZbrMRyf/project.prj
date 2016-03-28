@@ -13,6 +13,7 @@
     "LuaDependencies": [
         "cron.edit",
         "iguana.action",
+        "iguana.info",
         "iguana.user",
         "net.http.getCached",
         "os.fs.deleteDir",
@@ -20,7 +21,7 @@
         "web.basicauth"
     ],
     "OtherDependencies": [],
-    "timestamp": "1459168244",
+    "timestamp": "1459197741",
     "version_info": {
         "build": 0,
         "major": 6,
