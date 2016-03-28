@@ -15,8 +15,9 @@ application{
    service_display_name=iNTERFACEWARE Iguana
    service_name=Iguana
    service_description=Integration Engine
-   command_line=iguana --working_dir #WORKING_DIR
+   command_line=iguana --working_dir "#WORKING_DIR"
    command_line_unix=./iguana --working_dir #WORKING_DIR
+   path_registry_entry_win32 = SYSTEM\CurrentControlSet\Control\Session Manager\Environment
 }
 ]]
 
@@ -32,4 +33,21 @@ function hdf.create(Version)
    end
 end
 
+local ChangeVersion=[[
+net stop iguana
+iguana_service --install
+net start iguana
+]]
+
+function hdf.changeVerson(Version)
+   local FileName = dir.applicationVersion(Version)..'changeversion.bat'
+   trace(FileName)
+   if not iguana.isTest() then
+      local F=io.open(FileName, "w")
+      F:write(ChangeVersion)
+      F:close()
+   end
+end
+
 return hdf
+

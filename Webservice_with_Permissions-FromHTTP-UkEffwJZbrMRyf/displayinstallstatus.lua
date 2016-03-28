@@ -30,8 +30,15 @@ tr.current{
 <h1>Iguana Configuration Management Utility.</h1>
 <p>
 This utility is intended to make it easy to upgrade and/or rollback an
-Iguana instance to a newer or older version of Iguana.  Only Iguana 6 on
-64 bit Linux is supported as of now.
+Iguana instance to a newer or older version of Iguana.  Only supports
+Iguana 6 on 64 bit Linux and Windows currently.  The Windows support is
+fairly limited in that it's currently using a hard coded user ID "iNTERFACEWARE"
+that has Admin privilleges to run a scheduled task to change the service to windows
+and it requires that user to be logged in etc.  Error checking is limited.
+</p>
+<p>
+You may experience headaches and other side effects when using this utility. Consult
+your physician in the case of any trouble.
 </p>
 <table>
 <tr><th>Version</th><th>Current</th><th>Downloaded</th><th>Remove</th><th>Activate</th></tr>
@@ -48,7 +55,13 @@ Head back to the <a href="#DASHBOARD_URL">Iguana Dashboard</a>.
 ]]
 
 function display.status(R, A)
-   local Url = 'http://dl.interfaceware.com/iguana/linux/'
+   local Url
+   if dir.isWindows() then
+      -- TODO
+      Url = 'http://dl.interfaceware.com/iguana/windows/'
+   else   
+      Url = 'http://dl.interfaceware.com/iguana/linux/'
+   end
    local DownloadInfo = net.http.get{url=Url, live=true}
    local I =  {}
    
@@ -59,13 +72,16 @@ function display.status(R, A)
          I[K] = {}
       end 
    end
-   trace(I) 
-   for K,V in os.fs.glob(dir.application()..'*') do
-      K = K:sub(#dir.application()+1):gsub("%_", ".")
-      if not I[K] then
-         I[K] = {}
-      end 
-      I[K].downloaded = true     
+   trace(I)
+   -- The application dir may not have been created
+   if os.fs.stat(dir.application()) then
+      for K,V in os.fs.glob(dir.application()..'*') do
+         K = K:sub(#dir.application()+1):gsub("%_", ".")
+         if not I[K] then
+            I[K] = {}
+         end 
+         I[K].downloaded = true     
+      end
    end
    trace(I)
    local C = dir.currentVersion()

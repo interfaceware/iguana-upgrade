@@ -1,16 +1,39 @@
 local dir = {}
 
--- Common directory routines that say where things are located.  We should be running under the
--- home directory of the Iguana user we are using.
+-- Common  routines that say where things are located, OS type etc.  We should be running under the
+-- home directory of the Iguana user we are using in Linux.
 
-local RootDir = os.getenv('HOME')..'/'
+function dir.isWindows()
+   if os.getenv('SYSTEMROOT') and os.getenv('SYSTEMROOT'):find('Windows') then
+      return true
+   end
+   return false
+end
+
+function dir.is64Bit()
+   if dir.isWindows() then
+      if os.getenv('PROCESSOR_ARCHITECTURE') and 
+         os.getenv('PROCESSOR_ARCHITECTURE'):find('64') then
+         return true
+      else 
+         -- could be wrong!
+         return false
+      end
+   else
+      -- TODO for now assume all linux is 64 bit
+      return true
+   end
+end
 
 function dir.root()
-   return RootDir
+   if dir.isWindows() then
+      return os.getenv('ProgramFiles')..'/iNTERFACEWARE/Manager/'
+   end
+   return os.getenv('HOME')..'/'
 end
 
 function dir.application()
-   return RootDir..'iguana_app/'
+   return dir.root()..'Iguana/'
 end
 
 function dir.applicationVersion(Version)

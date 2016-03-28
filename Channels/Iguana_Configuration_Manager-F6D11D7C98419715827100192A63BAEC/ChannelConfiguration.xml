@@ -1,7 +1,7 @@
 <channel
    name="Iguana Configuration Manager"
    guid="F6D11D7C98419715827100192A63BAEC"
-   description="This proof of concept working for Iguana on 64 bit linux.&#xD;&#xA;&#xD;&#xA;It makes it easier to pull down new 6.0 versions of Iguana and upgrade to them and to rollback if necessary.&#xD;&#xA;"
+   description="This proof of concept working for Iguana on 64 bit linux and 64 bit Windows.&#xD;&#xA;&#xD;&#xA;It makes it easier to pull down new 6.0 versions of Iguana and upgrade to them and to rollback if necessary.&#xD;&#xA;&#xD;&#xA;This is definitely in ALPHA.  You should only run this on a test system and please contact iNTERFACEWARE before you play with this."
    start_automatically="true"
    logging_level="1"
    use_message_filter="false">
@@ -10,8 +10,8 @@
    <from_http
       type="mapper"
       guid="Webservice_with_Permissions-FromHTTP-UkEffwJZbrMRyf"
-      commit_id="386678ff18e973e11e0c161b4025adf590069b3f"
-      commit_comment="Better current column."
+      commit_id="21b21ab882ed38520a0e099fb36b43c26221c4c9"
+      commit_comment="Restart in 3 seconds."
       mapper_url_path="update/"/>
    <message_filter
       filter_after_logging="false"

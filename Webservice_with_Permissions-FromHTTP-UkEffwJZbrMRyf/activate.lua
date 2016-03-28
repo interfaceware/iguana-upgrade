@@ -2,6 +2,8 @@ local start   = require 'createstartscript'
 local install = require 'installcron'
 local display = require 'displayinstallstatus'
 
+local MakeScheduledTask = require 'scheduled_task'
+
 local dir = require 'dir'
 
 -- This call will:
@@ -15,6 +17,9 @@ local RebootScreen=[[
 <p>
 This Iguana is being shutdown.  In about a minute the new version should be started. 
 </p>
+<pre>
+#OUTPUT#
+</pre>
 <p>
 Go to <a href='#URL'>#URL</a>
 </p>
@@ -34,11 +39,18 @@ function Activate(R,A)
    end
    -- We could do more checks for the validity of the install
    -- we are changing over to.
-   start.createScript(Version)
-   install.cron()
-   net.http.respond{body=RebootScreen:gsub("#URL", dir.dashboardUrl(R))}
-   
-   if not iguana.isTest() then
+   local Output 
+   if dir.isWindows() then
+      Output = "Scheduled switch to "..R.params.version.."\n"
+      Output = Output..MakeScheduledTask(Version)
+   else
+      Output = "Cron scheduled to switch to "..R.params.version
+      start.createScript(Version)
+      install.cron()
+   end
+   local Body = RebootScreen:gsub("#URL", dir.dashboardUrl(R)):gsub("#OUTPUT#", Output)
+   net.http.respond{body=Body}
+   if not dir.isWindows() and not iguana.isTest() then
       -- this does a graceful shut down.  The cron job should restart Iguana
       os.execute("killall iguana_service")
    end   

@@ -7,16 +7,20 @@
         "dir.lua",
         "displayinstallstatus.lua",
         "fetch.lua",
-        "installcron.lua"
+        "installcron.lua",
+        "scheduled_task.lua"
     ],
     "LuaDependencies": [
         "cron.edit",
         "iguana.action",
         "iguana.user",
+        "net.http.getCached",
+        "os.fs.deleteDir",
+        "store2",
         "web.basicauth"
     ],
     "OtherDependencies": [],
-    "timestamp": "1458761885",
+    "timestamp": "1459167155",
     "version_info": {
         "build": 0,
         "major": 6,
