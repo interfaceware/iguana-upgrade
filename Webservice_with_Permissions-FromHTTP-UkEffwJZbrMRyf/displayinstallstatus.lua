@@ -32,7 +32,7 @@ tr.current{
 <h1>Iguana Configuration Management Utility.</h1>
 <p>
 This utility is intended to make it easy to upgrade and/or rollback an
-Iguana instance to a newer or older version of Iguana.  Itonly supports
+Iguana instance to a newer or older version of Iguana.  It only supports
 Iguana 6 on 64 bit Linux and Windows currently.  Error checking is limited so be careful!
 </p>
 <p>

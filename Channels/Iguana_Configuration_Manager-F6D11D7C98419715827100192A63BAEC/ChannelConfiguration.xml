@@ -1,7 +1,7 @@
 <channel
    name="Iguana Configuration Manager"
    guid="F6D11D7C98419715827100192A63BAEC"
-   description="This proof of concept working for Iguana on 64 bit linux and 64 bit Windows.&#xD;&#xA;&#xD;&#xA;It makes it easier to pull down new 6.0 versions of Iguana and upgrade to them and to rollback if necessary.&#xD;&#xA;&#xD;&#xA;This is definitely in ALPHA.  You should only run this on a test system and please contact iNTERFACEWARE before you play with this."
+   description="This proof of concept working for Iguana on 64 bit linux and 64 bit Windows.&#xD;&#xA;&#xD;&#xA;It makes it easier to pull down new 6.0 versions of Iguana and upgrade to them and to rollback if necessary.&#xD;&#xA;&#xD;&#xA;This is in ALPHA.  You should only run this on a test system and please contact iNTERFACEWARE before you play with this."
    start_automatically="true"
    logging_level="1"
    use_message_filter="false">
@@ -10,8 +10,8 @@
    <from_http
       type="mapper"
       guid="Webservice_with_Permissions-FromHTTP-UkEffwJZbrMRyf"
-      commit_id="51f8f41e28cf7467eccda7144f114cb47b9d71f2"
-      commit_comment="Fixed start script."
+      commit_id="88120efbd667b2925829aca3bd28a8681c25fd03"
+      commit_comment="Fixed typo"
       mapper_url_path="update/"/>
    <message_filter
       filter_after_logging="false"
