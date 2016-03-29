@@ -7,6 +7,7 @@
         "dir.lua",
         "displayinstallstatus.lua",
         "fetch.lua",
+        "getadminpassword.lua",
         "installcron.lua",
         "scheduled_task.lua"
     ],
@@ -21,7 +22,7 @@
         "web.basicauth"
     ],
     "OtherDependencies": [],
-    "timestamp": "1459198105",
+    "timestamp": "1459265206",
     "version_info": {
         "build": 0,
         "major": 6,

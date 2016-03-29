@@ -34,15 +34,23 @@ function Activate(R,A)
    local AppDir = dir.applicationVersion(Version)
    
    if not os.fs.stat(AppDir) then
-      return DisplayInstallStatus(R,A)
+      
+      return display.status(R,A)
       --error("This version is not installed.")
    end
    -- We could do more checks for the validity of the install
    -- we are changing over to.
    local Output 
    if dir.isWindows() then
+      local Username = R.params.username
+      local Password = R.get_params.password
       Output = "Scheduled switch to "..R.params.version.."\n"
-      Output = Output..MakeScheduledTask(Version)
+      local Result = MakeScheduledTask(Version, Username, Password)
+      Output = Output..Result
+      
+      if not Result:find("SUCCESS") then
+         Output = Output.."\nSetting up scheduled task failed.  Did you enter the correct username and password?"
+      end
    else
       Output = "Cron scheduled to switch to "..R.params.version
       start.createScript(Version)

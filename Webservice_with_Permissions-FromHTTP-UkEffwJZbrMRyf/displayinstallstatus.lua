@@ -32,14 +32,11 @@ tr.current{
 <h1>Iguana Configuration Management Utility.</h1>
 <p>
 This utility is intended to make it easy to upgrade and/or rollback an
-Iguana instance to a newer or older version of Iguana.  Only supports
-Iguana 6 on 64 bit Linux and Windows currently.  The Windows support is
-fairly limited in that it's currently using a hard coded user ID "iNTERFACEWARE"
-that has Admin privilleges to run a scheduled task to change the service to windows
-and it requires that user to be logged in etc.  Error checking is limited.
+Iguana instance to a newer or older version of Iguana.  Itonly supports
+Iguana 6 on 64 bit Linux and Windows currently.  Error checking is limited so be careful!
 </p>
 <p>
-This utility is in ALPHA.  Don't use in production system yet.
+This utility is in ALPHA.  Don't use in production system unless you really know what you are doing.
 </p>
 <table>
 <tr><th>Version</th><th>Current</th><th>Downloaded</th><th>Remove</th><th>Activate</th></tr>
@@ -69,9 +66,16 @@ from our website.
 </p>
 ]]
 
-
-
 function display.status(R, A)
+   local Url = "http://" ..R.headers.Host .. "/"
+   Url = Url
+   local X = xml.parse{data=iguana.channelConfig{guid=iguana.channelGuid()}}
+   Url = Url..X.channel.from_http.mapper_url_path
+   trace(Url)
+   net.http.respond{body="See status", code=301,  headers={Location=Url}}
+end
+
+function display.main(R, A)
    if PlatformInfo.os ~= 'windows' and PlatformInfo.os ~= 'linux' or PlatformInfo.cpu ~= '64bit' then
       net.http.respond{body=ErrorMessage}
       return
@@ -148,7 +152,11 @@ function display.status(R, A)
       end
       B = B .. "</td><td>"
       if not E.current and E.downloaded then
-         B = B.."<a href='activate?version="..Version.."'>Activate?</a>"
+         if dir.isWindows() then
+            B = B.."<a href='getadminpassword?version="..Version.."'>Activate?</a>"
+         else   
+            B = B.."<a href='activate?version="..Version.."'>Activate?</a>"
+         end
       end
       B = B..'</td></tr>\n'
    end

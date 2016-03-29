@@ -7,6 +7,7 @@ local display = require 'displayinstallstatus'
 require 'activate'
 require 'fetch'
 require 'delete'
+require 'getadminpassword'
 
 local basicauth = require 'web.basicauth'
 local user = require 'iguana.user'
@@ -22,10 +23,11 @@ function SetupActions()
    -- other groups that a user might belong to.
    local AdminActions = Dispatcher:actions{group='Administrators', priority=1}
    -- We just assign URL request paths to functions
-   AdminActions[""] = display.status
+   AdminActions[""] = display.main
    AdminActions["fetch"] = Fetch
    AdminActions["delete"] = Delete
    AdminActions["activate"] = Activate
+   AdminActions["getadminpassword"] = GetAdminPassword
    -- Define user actions
    -- Priority 2 means these actions will not be invoked if a user also belongs
    -- to a group with lower priority permissions.
