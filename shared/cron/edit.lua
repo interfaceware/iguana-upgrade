@@ -21,4 +21,22 @@ function cron.write(NewContent)
    end   
 end
 
+
+local CronReadHelp=[[{
+   "Returns": [{"Desc": "Returns contents of the current user crontab in string."}],
+   "Title": "cron.read()",
+   "Parameters": [],
+   "ParameterTable": false,
+   "Usage": "local Contents = cron.read()",
+   "Examples": ["
+local Contents = cron.read();
+-- Change contents
+cron.write(Contents);
+"
+   ],
+   "Desc": "This function load the contents of the crontab file for the Iguana current user.  It only works under operating systems like linux which support cron."
+}]]
+
+help.set{input_function=cron.read, help_data=json.parse{data=CronReadHelp}}
+
 return cron
