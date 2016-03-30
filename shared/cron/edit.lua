@@ -23,7 +23,7 @@ end
 
 
 local CronReadHelp=[[{
-   "Returns": [{"Desc": "Returns contents of the current user crontab in string."}],
+   "Returns": [{"Desc": "Returns contents of the Iguana current user crontab in string."}],
    "Title": "cron.read()",
    "Parameters": [],
    "ParameterTable": false,
@@ -38,5 +38,24 @@ cron.write(Contents);
 }]]
 
 help.set{input_function=cron.read, help_data=json.parse{data=CronReadHelp}}
+
+
+local CronWriteHelp=[[{
+   "Returns": [{"Desc": "Nothing."}],
+   "Title": "cron.write()",
+   "Parameters": [ {"Contents" : {"Desc" : "String containing new contents of cron tab file."}}],
+   "ParameterTable": false,
+   "Usage": "cron.write(Contents)",
+   "Examples": ["
+local Contents = cron.read();
+-- Change contents
+cron.write(Contents);
+"
+   ],
+   "Desc": "This function alters the crontab for the Iguana current user.  It only works under operating systems like linux which support cron."
+}]]
+
+help.set{input_function=cron.write, help_data=json.parse{data=CronWriteHelp}}
+
 
 return cron

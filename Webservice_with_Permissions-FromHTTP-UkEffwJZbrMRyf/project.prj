@@ -8,8 +8,7 @@
         "displayinstallstatus.lua",
         "fetch.lua",
         "getadminpassword.lua",
-        "installcron.lua",
-        "scheduled_task.lua"
+        "installcron.lua"
     ],
     "LuaDependencies": [
         "cron.edit",
@@ -19,10 +18,11 @@
         "net.http.getCached",
         "os.fs.deleteDir",
         "store2",
-        "web.basicauth"
+        "web.basicauth",
+        "windows.scheduler"
     ],
     "OtherDependencies": [],
-    "timestamp": "1459265408",
+    "timestamp": "1459360597",
     "version_info": {
         "build": 0,
         "major": 6,

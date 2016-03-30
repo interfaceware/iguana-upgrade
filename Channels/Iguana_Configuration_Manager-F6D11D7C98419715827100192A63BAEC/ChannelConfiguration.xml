@@ -10,8 +10,8 @@
    <from_http
       type="mapper"
       guid="Webservice_with_Permissions-FromHTTP-UkEffwJZbrMRyf"
-      commit_id="88120efbd667b2925829aca3bd28a8681c25fd03"
-      commit_comment="Fixed typo"
+      commit_id="18a76c4cc6e60c6448f422280f7529f3a9f30505"
+      commit_comment="Made sure the help was correct."
       mapper_url_path="update/"/>
    <message_filter
       filter_after_logging="false"

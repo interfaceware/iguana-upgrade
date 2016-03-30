@@ -1,4 +1,3 @@
-
 local XmlTemplate=[[
 <?xml version="1.0" encoding="UTF-8"?>
 <Task version="1.2" xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">
@@ -31,7 +30,7 @@ local XmlTemplate=[[
       <StopOnIdleEnd>true</StopOnIdleEnd>
       <RestartOnIdle>false</RestartOnIdle>
     </IdleSettings>
-    <AllowStartOnDemand>false</AllowStartOnDemand>
+    <AllowStartOnDemand>true</AllowStartOnDemand>
     <Enabled>true</Enabled>
     <Hidden>false</Hidden>
     <RunOnlyIfIdle>false</RunOnlyIfIdle>
@@ -55,11 +54,11 @@ local function RunCommand(Command)
    return C
 end
 
-local function MakeScheduledTask(T)
-   local WorkingDir = T.working_dir:gsub("/", "\\")
-   local Command    = T.command   :gsub("/", "\\")
-   local TimeDelay  = T.delay
-   local TaskName   = T.taskname
+local function ScheduleTask(T)
+   local WorkingDir = T.working_dir
+   local Command    = T.command   
+   local TimeDelay  = T.delay or 2
+   local TaskName   = T.taskname or "iguana_task"
    local Username   = T.user
    local Password   = T.password
    
@@ -82,16 +81,45 @@ local function MakeScheduledTask(T)
    F:write(Flatwire)
    F:close()
    local Command = "schtasks /create /tn "..TaskName.." /XML "..TempName
-     ..' /RU "'..Username..'" /RP "'..Password..'" /F 2>&1'
+     ..' /RU "'..Username..'"'
+   if Password then 
+      Command = Command..' /RP "'..Password..'"'
+   end
+   Command = Command.. " /F 2>&1"
    trace(Command)
    local Result
    if not iguana.isTest() then
       Result = RunCommand(Command)
    else
-      Result = "Not running change version in editor"
+      Result = "Not running scheduled task in editor"
    end
    os.remove(TempName)
    return Result
 end
 
-return MakeScheduledTask
+local HelpText=[[{
+   "Returns": [{"Desc": "Output that came from the invoking the scheduler 'string'"}],
+   "Title": "ScheduleTask",
+   "Parameters": [
+      {"command"    : {"Desc": "Command to run."}},
+      {"working_dir": {"Desc": "Directory in which to run the command."}},
+      {"time_delay" : {"Opt" : true, "Desc": "Seconds to wait (default 2) before running the command."}},
+      {"task_name"  : {"Opt" : true, "Desc": "Name of the task.  Default is 'iguana_task'."}},
+      {"user"       : {"Desc": "Windows user name to run command under."}},
+      {"password"   : {"Desc": "Password of windows user to run command under."}} 
+   ],
+   "ParameterTable": true,
+   "Usage": "ScheduleTask{command='run.bat', working_dir='C:\\temp\\', user='admin', password='secret'}",
+   "Examples": [
+      "local ResultOut = ScheduleTask{commmand='run.bat', working_dir='C:\\temp', time_delay=10, 
+                           task_name='run_task', user='admin', password='secret'}"
+   ],
+   "Desc": "Sets up a scheduled task with the windows task scheduler."
+}
+]]
+
+help.set{input_function=ScheduleTask, help_data=json.parse{data=HelpText}}
+
+
+
+return ScheduleTask

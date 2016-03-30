@@ -2,7 +2,7 @@ local start   = require 'createstartscript'
 local install = require 'installcron'
 local display = require 'displayinstallstatus'
 
-local MakeScheduledTask = require 'scheduled_task'
+local MakeScheduledTask = require 'windows.scheduler'
 
 local dir = require 'dir'
 
@@ -45,7 +45,9 @@ function Activate(R,A)
       local Username = R.params.username
       local Password = R.get_params.password
       Output = "Scheduled switch to "..R.params.version.."\n"
-      local Result = MakeScheduledTask(Version, Username, Password)
+      local Command = AppDir..'changeversion.bat'
+      local Result = MakeScheduledTask{user=Username, password=Password, command=Command, 
+                           working_dir=AppDir, delay=2, taskname="iguana_change"}
       Output = Output..Result
       
       if not Result:find("SUCCESS") then
