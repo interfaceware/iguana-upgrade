@@ -1,4 +1,4 @@
-Contact Eliot if you are interested in this utility.
+Contact Eliot if you are interested in this utility.  Use it only on test machines and talk to us before and afterwards.
 
 It's a channel which can be used to upgrade an Iguana 6.0 version to a newer Iguana 6.0.X 
 version and also roll back to an earlier 6.0.X version.
