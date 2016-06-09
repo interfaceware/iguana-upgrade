@@ -1,7 +1,5 @@
-Contact Eliot if you are interested in this utility.  Use it only on test machines and talk to us before and afterwards.
-
 It's a channel which can be used to upgrade an Iguana 6.0.X version to a newer Iguana 6.0.X 
-version and also roll back to an earlier 6.0.X version.
+version and also roll back to an earlier 6.0.X version.  The utility is supported on Linux and Windows in 32 and 64 bits flavours.
 
-So far we have got this working under 64 bit Linux and 64 bit Windows.  Should have support implemented for 32 bit Windows
-and 32 bit Linux (does anyone still run 32 bit Linux in production...why?)
+We recommend that you try this utility on a development or test server to verify that it is compatible with your environment before trying it within a production context.
+
