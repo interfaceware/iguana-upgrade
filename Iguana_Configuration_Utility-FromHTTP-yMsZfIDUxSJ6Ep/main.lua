@@ -11,6 +11,7 @@
 --      - only with Iguana 6.0 onwards
 --      - a user with admin privileges (Iguana and OS) is required
 --        to use this application.
+--   See http://help.interfaceware.com/v6/iguana-configuration-utility
 --
 --   authors:
 --      Eliot Muir and Scott Ripley

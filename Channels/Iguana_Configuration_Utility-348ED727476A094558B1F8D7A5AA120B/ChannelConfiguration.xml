@@ -1,7 +1,7 @@
 <channel
    name="Iguana Configuration Utility"
    guid="348ED727476A094558B1F8D7A5AA120B"
-   description="This utility (for Windows/Linux) is designed for easy upgrade and/or rollback between versions of Iguana 6+.&#xD;&#xA;&#xD;&#xA;We recommend trying this utility within a test environment first to confirm your setup is compatible."
+   description="This utility (for Windows/Linux) is designed for easy upgrade and/or rollback between versions of Iguana 6+.&#xD;&#xA;&#xD;&#xA;See http://help.interfaceware.com/v6/iguana-configuration-utility&#xD;&#xA;&#xD;&#xA;We recommend trying this utility within a test environment first to confirm your setup is compatible."
    start_automatically="true"
    logging_level="1"
    use_message_filter="false">
@@ -10,8 +10,8 @@
    <from_http
       type="mapper"
       guid="Iguana_Configuration_Utility-FromHTTP-yMsZfIDUxSJ6Ep"
-      commit_id="48ac9def601d37d081df9815a661d47f8f2c1bdc"
-      commit_comment="Import Translators: config manager second import"
+      commit_id="7276cf37d29dc87d211ba24a9d091e4ed61532ed"
+      commit_comment="Added help links."
       mapper_url_path="update/"/>
    <message_filter
       filter_after_logging="false"
