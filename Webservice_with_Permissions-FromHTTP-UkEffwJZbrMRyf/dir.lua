@@ -11,23 +11,44 @@ function dir.isWindows()
    return Info.os == "windows"
 end
 
+function dir.isLinux()
+   return Info.os == "linux"
+end
+
 function dir.is64Bit()
    return Info.cpu == '64bit'
 end
 
+function dir.is32Bit()
+   return Info.cpu == '32bit'
+end
+
 function dir.root()
    if dir.isWindows() then
-      return os.getenv('ProgramFiles')..'/iNTERFACEWARE/Manager/'
+      return os.getenv('ProgramFiles')..'/iNTERFACEWARE/'      
+   else 
+      return os.getenv('HOME')..'/'
    end
-   return os.getenv('HOME')..'/'
 end
 
 function dir.application()
-   return dir.root()..'Iguana/'
+   if dir.isWindows() then
+      return os.getenv('ProgramFiles')..'/iNTERFACEWARE/Iguana-6/'      
+   else 
+      return os.getenv('HOME')..'/Iguana-6/'
+   end
+end
+
+function dir.releases()
+   if dir.isWindows() then
+      return os.getenv('ProgramFiles')..'/iNTERFACEWARE/Iguana-6/Releases/'      
+   else 
+      return os.getenv('HOME')..'/Iguana-6/Releases/'
+   end
 end
 
 function dir.applicationVersion(Version)
-   return dir.application() .. Version..'/'
+   return dir.releases() .. Version..'/'
 end
 
 function dir.currentVersion()
@@ -40,6 +61,13 @@ function dir.versionString(Version)
       error("Need version")
    end
    return Version:gsub("%.", "_")
+end
+
+function dir.versionDotString(Version)
+   if not Version then
+      error("Need version")
+   end
+   return Version:gsub("%_", ".")
 end
 
 function dir.create(Dir)
@@ -55,9 +83,15 @@ function dir.create(Dir)
 end
 
 function dir.dashboardUrl(R)
-   return "http://"..
-       R.headers.Host:gsub(iguana.webInfo().https_channel_server.port, 
+   if iguana.webInfo().web_config.use_https == true then
+      return "https://"..
+      R.headers.Host:gsub(iguana.webInfo().https_channel_server.port, 
+         iguana.webInfo().web_config.port)..'/'   
+   else
+      return "http://"..
+      R.headers.Host:gsub(iguana.webInfo().https_channel_server.port, 
          iguana.webInfo().web_config.port)..'/'
+   end
 end
 
 return dir

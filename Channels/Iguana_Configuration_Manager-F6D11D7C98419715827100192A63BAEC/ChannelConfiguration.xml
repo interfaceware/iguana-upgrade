@@ -1,7 +1,7 @@
 <channel
    name="Iguana Configuration Manager"
    guid="F6D11D7C98419715827100192A63BAEC"
-   description="This proof of concept working for Iguana on 64 bit linux and 64 bit Windows.&#xD;&#xA;&#xD;&#xA;It makes it easier to pull down new 6.0 versions of Iguana and upgrade to them and to rollback if necessary.&#xD;&#xA;&#xD;&#xA;This is in ALPHA.  You should only run this on a test system and please contact iNTERFACEWARE before you play with this."
+   description="This utility (for Windows/Linux) is designed for easy upgrade and/or rollback between versions of Iguana 6+.&#xD;&#xA;&#xD;&#xA;We recommend trying this utility within a test environment first to confirm your setup is compatible."
    start_automatically="true"
    logging_level="1"
    use_message_filter="false">
@@ -10,8 +10,8 @@
    <from_http
       type="mapper"
       guid="Webservice_with_Permissions-FromHTTP-UkEffwJZbrMRyf"
-      commit_id="18a76c4cc6e60c6448f422280f7529f3a9f30505"
-      commit_comment="Made sure the help was correct."
+      commit_id="602d8cc867a68bf1728714443bf8c4cbb7adb909"
+      commit_comment="Updated comment."
       mapper_url_path="update/"/>
    <message_filter
       filter_after_logging="false"

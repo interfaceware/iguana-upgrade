@@ -16,7 +16,7 @@ local XmlTemplate=[[
     <Principal id="Author">
       <UserId>#USER#</UserId>
       <LogonType>Password</LogonType>
-      <RunLevel>LeastPrivilege</RunLevel>
+      <RunLevel>HighestAvailable</RunLevel>
     </Principal>
   </Principals>
   <Settings>
@@ -119,7 +119,5 @@ local HelpText=[[{
 ]]
 
 help.set{input_function=ScheduleTask, help_data=json.parse{data=HelpText}}
-
-
 
 return ScheduleTask

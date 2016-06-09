@@ -39,16 +39,22 @@ function user.open()
 end
 
 local OpenHelp=[[{
-   "Returns": [{"Desc": "Returns object to query user permissions."}],
-   "Title": "user.open()",
+   "Returns": [{"Desc": "Returns a table of functions to query user permissions <u>table</u>."}],
+   "Title": "user.open",
    "Parameters": [],
    "ParameterTable": false,
-   "Usage": "local UserInfo = user.open()",
+   "Usage": "user.open()",
    "Examples": [
       "local UserInfo = user.open()
 if UserInfo:userInGroup{user='fred', group='Users'} then
    trace('Yes - he is a user!')
 end"
+   ],
+   "SeeAlso":[
+      {
+         "Title":"Source code for the iguana.action.lua module on github",
+         "Link":"https://github.com/interfaceware/iguana-excel/blob/master/shared/iguana/action.lua"
+      },
    ],
    "Desc": "This function loads the Iguana user database and allows one to query roles."
 }]]
@@ -60,7 +66,7 @@ function method:userInGroup(T)
    local User = T.user
    local Group = T.group
    local Info = getmetatable(self).info
-   if not Info[Group] then 
+   if not Info[Group] then
       return false
    end
       
@@ -68,20 +74,26 @@ function method:userInGroup(T)
 end
 
 local UserInGroupHelp=[[{
-   "Returns": [{"Desc": "Returns true if the given user is a member of a group."}],
-   "Title": "UserInfo:userInGroup()",
+   "Returns": [{"Desc": "Returns true if the User is a member of the specified Group <u>boolean</u>."}],
+   "Title": "UserInfo:userInGroup",
    "Parameters": [
-      { "user": {"Desc": "Name of user to check."}},
-      { "group": { "Desc": "Name of group to check if they have membership of."}}],
+      { "user": {"Desc": "Name of the Iguana User to check <u>string</u>."}},
+      { "group": { "Desc": "Name of the Iguana Group to check for membership of <u>string</u>."}}],
    "ParameterTable": true,
-   "Usage": "UserInfo:userInGroup{user='fred', group='Administrators'}",
+   "Usage": "UserInfo:userInGroup{user=&lt;value&gt;, group=&lt;value&gt}",
    "Examples": [
       "local UserInfo = user.open()
 if UserInfo:userInGroup{user='fred', group='Users'} then
    trace('Yes - he is a user!')
 end"
    ],
-   "Desc": "This method confirms if user belongs to a given group."
+   "SeeAlso":[
+      {
+         "Title":"Source code for the iguana.user.lua module on github",
+         "Link":"https://github.com/interfaceware/iguana-excel/blob/master/shared/iguana/user.lua"
+      },
+   ],
+   "Desc": "Confirms if an Iguana User belongs to a Group."
 }]]
 
 help.set{input_function=method.userInGroup, help_data=json.parse{data=UserInGroupHelp}}
@@ -92,13 +104,13 @@ function method:user(T)
    return Info._user[User]
 end
 
-local UserInfoHelp=[[{
-   "Returns": [{"Desc": "Information on a user - just email currently."}],
-   "Title": "UserInfo:userInGroup()",
+local UserHelp=[[{
+   "Returns": [{"Desc": "A table of user information (currently only email is included)  <u>table</u>."}],
+   "Title": "UserInfo:user",
    "Parameters": [
-      { "user": {"Desc": "Name of user to check."}}],
+      { "user": {"Desc": "Name of user to check <u>string</u>."}}],
    "ParameterTable": true,
-   "Usage": "local Info = UserInfo:user{user='fred'}",
+   "Usage": "UserInfo:user{user=&lt;value&gt;}",
    "Examples": [
       "local UserInfo = user.open()
 local Info = UserInfo:user{user='fred'}
@@ -106,12 +118,16 @@ if (Info) then
    trace('Email is Info.email')
 end"
    ],
-   "Desc": "This method returns information on the user."
+   "SeeAlso":[
+      {
+         "Title":"Source code for the iguana.user.lua module on github",
+         "Link":"https://github.com/interfaceware/iguana-excel/blob/master/shared/iguana/user.lua"
+      },
+   ],
+   "Desc": "This method returns a table of information on a specified Iguana User. <br><br>
+<b>Note:</b> Currently the returned table only contains a single field for the email address."
 }]]
 
-help.set{input_function=method.user, help_data=json.parse{data=UserInfoHelp}}
-
-
-
+help.set{input_function=method.user, help_data=json.parse{data=UserHelp}}
 
 return user

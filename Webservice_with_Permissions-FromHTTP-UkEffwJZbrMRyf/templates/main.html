@@ -1,0 +1,33 @@
+      <script id="body_template" type="text/template">
+         <div class="container">
+            <div class="contents">
+               <h1>Iguana Configuration Management Utility</h1>
+               <p>
+                  This utility is intended to make it easy to upgrade and/or rollback an
+                  Iguana instance to a newer or older version of Iguana.  It only supports
+                  Iguana 6 on Linux and Windows currently.  Error checking is limited so be careful!
+               </p>
+               <p>
+                  This utility is in ALPHA.  Don't use in production system unless you really know what you are doing.
+               </p>
+               <table id="main-table">
+                  <tr><th>Version</th><th>Current</th><th>Downloaded</th><th>Remove</th><th>Activate</th><th>License Expiry</th><th>Maintenance Expiry</th></tr>
+                  {{#versions}}
+                  <tr>
+                     <td>{{version}}</td>
+                     {{#current}} <td>Yes</td> {{/current}}
+                     {{^current}} <td>-</td> {{/current}} 
+                     {{#downloaded}} <td>Yes</td> {{/downloaded}}
+                     {{^downloaded}} <td>No</td> {{/downloaded}} 
+                     {{#remove}} <td>remove?</td> {{/remove}}
+                     {{^remove}} <td></td> {{/remove}} 
+                     <td>{{activate}}</td>
+                     <td>{{license_expiry}}</td>
+                     <td>{{maintenance_expiry}}</td>
+                  </tr>
+                  {{/versions}}
+               </table>
+               <p class="footer">&#8592; Head back to the <a href="{{dashboard_url}}">Iguana Dashboard</a></p>
+            </div>
+         </div>
+      </script>
