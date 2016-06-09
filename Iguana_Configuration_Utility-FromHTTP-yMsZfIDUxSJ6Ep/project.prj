@@ -1,0 +1,45 @@
+{
+    "LocalDependencies": [
+        "icm-api.lua",
+        "icm-config.lua",
+        "icm-create-iguana-hdf-file.lua",
+        "icm-create-linux-restart-script.lua",
+        "icm-create-linux-start-script.lua",
+        "icm-delete-iguana-binary.lua",
+        "icm-fetch-iguana-binary.lua",
+        "icm-iguana-restart.lua",
+        "icm-install-linux-cron.lua",
+        "icm-installation-status.lua",
+        "icm-utils.lua",
+        "icm-webserver.lua",
+        "mils-license-utils.lua",
+        "mils-license.lua",
+        "web/file.lua",
+        "www/css/main.css",
+        "www/img/Logo-IguanaTools@2x.png",
+        "www/index.html",
+        "www/js/interfaceware-mustache.js",
+        "www/js/interfaceware-utils.js",
+        "www/js/mustache.js"
+    ],
+    "LuaDependencies": [
+        "cron.edit",
+        "iguana.action",
+        "iguana.info",
+        "iguana.user",
+        "net.http.cache",
+        "net.http.getCached",
+        "os.fs.deleteDir",
+        "store2",
+        "web.basicauth",
+        "web.file",
+        "windows.scheduler"
+    ],
+    "OtherDependencies": [],
+    "timestamp": "1465497924",
+    "version_info": {
+        "build": 0,
+        "major": 6,
+        "minor": 0
+    }
+}
