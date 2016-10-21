@@ -41,10 +41,11 @@ function start.createScript(Version)
    Content = Content:gsub("#RUN_COMMAND#", Command)
    trace(Content)
    if not iguana.isTest() then
-      local F = io.open(RootDir.."iguana_start.sh", "w")
+      local IguanaService = icm_utils.getIguanaService(iguana.appDir() .. "iguana_service.hdf")
+      local F = io.open(RootDir..IguanaService.."_start.sh", "w")
       F:write(Content)
       F:close()
-      os.fs.chmod(RootDir.."iguana_start.sh", 700)
+      os.fs.chmod(RootDir..IguanaService"_start.sh", 700)
    end
 end
 

@@ -1,4 +1,4 @@
-         function updatePage() {
+         function updatePage(message) {
             // reference:
             //   - http://boilingplastic.com/using-mustache-templates-for-javascript-practical-examples/
             //   - http://jonnyreeves.co.uk/2012/using-external-templates-with-mustachejs-and-jquery/
@@ -10,7 +10,11 @@
                },
                success: function(body_data) {
                   if(body_data.status == "ok") {
-                     addQueryParamsForMustache(document.location.search, body_data);
+                     var q = document.location.search
+                     if(message != null) {
+                        q = q + "&message="+message;
+                     }
+                     addQueryParamsForMustache(q, body_data);
                      var body = $('#main').html();
                      var body_html = Mustache.to_html(body, body_data);
                      $('#outer').html(body_html);
@@ -23,6 +27,43 @@
             });            
          }
 
+
+         function upload() {
+            
+            document.getElementById("message").innerHTML = "";
+            document.getElementById("loading-upload").innerHTML = "<img src=\"http://static.interfaceware.com/devops/spinner.gif\"/>";
+            
+            // http://stackoverflow.com/questions/7909161/jquery-iframe-file-upload
+            
+            var iframe = $('<iframe name="postiframe" id="postiframe" style="display: none"></iframe>');
+
+            $("body").append(iframe);
+
+            var form = $('#upload_already');
+
+            form.attr("action", "/update/icm-upload");
+            form.attr("method", "post");
+
+            form.attr("encoding", "multipart/form-data");
+            form.attr("enctype", "multipart/form-data");
+
+            form.attr("target", "postiframe");
+            form.attr("file", $('#filename').val());
+            form.submit();
+                        
+            $("#postiframe").load(function () {
+               iframeContents = this.contentWindow.document.body.innerHTML;
+               iframeContents = iframeContents.replace(/<(?:.|\n)*?>/gm, '');
+               var message = "";
+               var result = JSON.parse(iframeContents);
+               if(result.status == "error") {
+                 message = "<b><i>problem:</i></b> <i>" + result.message + "</i>";   
+               } 
+               updatePage(message);
+            });                                                 
+            
+         }
+
          function fetch(version) {
             document.getElementById("loading-"+version).innerHTML = "<img src=\"http://static.interfaceware.com/devops/spinner.gif\"/>";
             $.ajax({
@@ -32,7 +73,12 @@
                   handleAjaxError(request, status, error);
                },
                success: function(data) {
-                  updatePage();
+                  if(data.status == "ok") {
+                     updatePage();
+                  } else {
+                     message = "<b><i>problem:</i></b> <i>" + data.message + "</i>";   
+                     updatePage(message);               
+                  }                  
                }
             });
          }
@@ -46,7 +92,12 @@
                   handleAjaxError(request, status, error);
                },
                success: function(data) {
-                  updatePage();
+                  if(data.status == "ok") {
+                     updatePage();
+                  } else {
+                     message = "<b><i>problem:</i></b> <i>" + data.message + "</i>";   
+                     updatePage(message);               
+                  } 
                }
             });
          }          

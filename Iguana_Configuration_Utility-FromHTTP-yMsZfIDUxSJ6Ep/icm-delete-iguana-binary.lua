@@ -23,16 +23,26 @@ os.fs.deleteDir = require 'os.fs.deleteDir'
 function icm_delete_iguana_binary(R, A)
    local Version = icm_utils.versionString(R.params.version)
    if icm_utils.currentVersion() == Version:gsub("%_", ".") then
-      return display.status(R,A)
-      --error("Not allowed to delete current version")     
+      return display.status(R,A)   
    end
-   local AppDir = icm_utils.applicationVersion(Version)
    
-   if not os.fs.stat(AppDir) then
-      return display.status(R,A)
-      --error("This version is not installed.")
+   local appDir = icm_utils.applicationVersion(Version)
+   
+   if not os.fs.stat(appDir) then
+      return { ["status"]="ok" }
    end
-   os.fs.deleteDir{dir=AppDir}
-   --display.status(R,A)
-   return { ["status"]="ok" }
+
+   local success, T = pcall(os.fs.deleteDir, { dir = appDir })
+   if success then
+      t = { 
+         ["status"]="ok" 
+      }       
+   else 
+      t = { 
+         ["status"]="error",
+         ["dashboard_url"]= icm_utils.dashboardUrl(R),
+         ["message"] = "error removing directory ("..appDir..") - " .. T
+      }      
+   end    
+   return t
 end

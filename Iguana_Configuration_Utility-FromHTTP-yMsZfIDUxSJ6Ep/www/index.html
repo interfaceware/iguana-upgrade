@@ -30,7 +30,7 @@
 
       <header>
          <div class="logo">
-            <a href="http://192.168.0.165:6543/"><img class="iguana_logo" src="/update/www/img/Logo-IguanaTools@2x.png"></a>
+            <a href="javascript:updatePage();"><img class="iguana_logo" src="/update/www/img/Logo-IguanaTools@2x.png"></a>
          </div>
          <div class="tool-title">
             Configuration Management Utility
@@ -51,7 +51,8 @@
          <div class="inner">
          <h1>Iguana Configuration Management Utility</h1>
          <p>This utility (for Windows/Linux) is designed for easy upgrade and/or rollback between versions of Iguana 6+.</p>
-         <p><em>We recommend trying this utility within a test environment first to confirm your setup is compatible.</em></p>
+         <p><em>We recommend trying this utility within a test environment first to confirm your setup is compatible.</em></p>        
+  
          <table id="main-table">
             <tr><th>Version</th><th>Current</th><th>Downloaded</th><th>Remove</th><th>Activate</th><th>License Expiry</th><th>Maintenance Expiry</th></tr>
             {{#versions}}
@@ -60,7 +61,8 @@
                {{#current}}    <td>Yes</td> {{/current}}
                {{^current}}    <td>-</td> {{/current}} 
                {{#downloaded}} <td>Yes</td> {{/downloaded}}
-               {{^downloaded}} <td><div id="loading-{{dir_version}}"><a href="#" onClick="fetch('{{dir_version}}')">No</a></div></td> {{/downloaded}} 
+               {{^downloaded}} <td>{{#internet}}<div id="loading-{{dir_version}}"><a href="#" onClick="fetch('{{dir_version}}')">No</a></div>{{/internet}}
+                                   {{^internet}}No{{/internet}}</td> {{/downloaded}} 
                {{#remove}}     <td><div id="removing-{{dir_version}}"><a href="#" onClick="removing('{{dir_version}}')">Remove?</a></div></td> {{/remove}}
                {{^remove}}     <td>-</td> {{/remove}} 
                {{#activate}}   
@@ -75,6 +77,21 @@
             </tr>
             {{/versions}}
          </table>         
+        
+         {{^internet}}
+             <i>no internet connection detected / optionally upload an appropriate Iguana Binary distribution: <br/>
+             <br/>
+             <form id="upload_already" action="/update/icm-upload" method="post" enctype="multipart/form-data">
+               <input type="file" id="filename" name="filename" />
+               <button type="button" class="button"  onClick="upload();">Upload</button>
+            </form><div id="loading-upload"></div>               
+            <div id="textarea"></div>     
+         {{/internet}}
+         <div id="message">
+         {{#message}}
+         {{{message}}}
+         {{/message}}  
+         </div>
          </div>
          </div>
          </div>
@@ -113,6 +130,7 @@
          <div class="middle">
          <div class="inner">        
          <h2>Restart Iguana Instance For New License</h2>
+         {{^license_status}}
          <h4>Windows Administrator Login</h4>
          <p>To restart this Iguana instance please enter the name and password of a user<br/>
             with administrative privileges on the windows machine this Iguana instance is running on:<br/></p>
@@ -127,7 +145,11 @@
             </table>
             <input value="{{version}}" name="version" type="hidden">
             <input value="icm-iguana-restart" name="action" type="hidden">  
-         </form>  
+         </form>
+         {{/license_status}}
+         {{#license_status}}
+         {{license_status}}
+         {{/license_status}}
          <div id="activating-{{version}}"></div> 
          <p class="footer">&#8592; Back to <a href="javascript:updatePage()">Configuration Manager Home</a></p>
          </div>

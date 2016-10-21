@@ -13,7 +13,7 @@
 --     Eliot Muir / Scott Ripley
 --
 -- **********************************************************************
-
+ 
 local display = {}
 
 require 'net.http.cache'
@@ -24,8 +24,6 @@ local user = require 'iguana.user'
 local basicauth = require 'web.basicauth'
 
 local icm_utils = require 'icm-utils'
-
-local PlatformInfo = iguana.info()
 
 local ErrorMessage=[[
 <h3>OS Not Supported</h3>
@@ -102,8 +100,8 @@ function display.status(R, A)
    net.http.respond{body="See status", code=301,  headers={Location=Url}}
 end
 
-function display.api_status(R,A)
-   
+function display.api_status(R,A)   
+      
    -- check for admin user
    local Auth = basicauth.getCredentials(R)
    local userInfo = user.open()
@@ -116,12 +114,12 @@ function display.api_status(R,A)
       }
       return t           
    end
-
+   
    -- check for valid platform...
-   if (not ((PlatformInfo.os == 'windows' and PlatformInfo.cpu == '64bit') or
-            (PlatformInfo.os == 'windows' and PlatformInfo.cpu == '32bit') or
-            (PlatformInfo.os == 'linux' and PlatformInfo.cpu == '64bit') or
-            (PlatformInfo.os == 'linux' and PlatformInfo.cpu == '32bit'))) then
+   if (not ((icm_utils.isWindows() and icm_utils.is64Bit()) or
+            (icm_utils.isWindows() and icm_utils.is32Bit()) or
+            (icm_utils.isLinux() and icm_utils.is64Bit()) or
+            (icm_utils.isLinux() and icm_utils.is32Bit()))) then
       t = { 
         ["status"]="error",
         ["windows"]="yes",
@@ -131,37 +129,38 @@ function display.api_status(R,A)
       return t           
       
    end
-      
-   -- check for internet access...
-   local Success, ErrorMessage = pcall(net.http.get, {url="http://dl.interfaceware.com", cache_time=0, live=true})
-   if not Success then
-      t = { 
-        ["status"]="error",
-        ["windows"]="yes",
-        ["dashboard_url"]= icm_utils.dashboardUrl(R),
-        ["message"] = NoInternetMessage
-      }
-      return t                       
-   end
    
    -- check for curl
-   if(PlatformInfo.os ~= 'windows') then
+   if(not icm_utils.isWindows()) then
       local curlPresent = io.popen("curl --version")
       curlPresent:flush()
       local curlStatus = curlPresent:read()      
       curlPresent:close()      
       if not curlStatus:find("curl") then
-         --net.http.respond{body=html_templates.Header..NoCurlMessage..":"..curlStatus..html_templates.Footer(R)}
-         --return
          t = { 
            ["status"]="error",
            ["windows"]="yes",
            ["dashboard_url"]= icm_utils.dashboardUrl(R),
-           ["message"] = NoInternetMessage
+           ["message"] = NoCurlMessage
          }
          return t             
       end
    end
+    
+    -- check for running as service
+   if(not icm_utils.isWindows()) then       
+      local IguanaService = icm_utils.getIguanaService(iguana.appDir() .. "iguana_service.hdf")
+      local IguanaServicePID = icm_utils.executeAndCapture("cat " .. iguana.appDir() .. "/"..IguanaService..".pid") 
+      local IguanaServiceRunning = icm_utils.executeAndCapture("kill -0 " .. IguanaServicePID.." 2>&1")  
+      if(not(IguanaServiceRunning=="")) then 
+         t = { 
+           ["status"]="error",
+           ["dashboard_url"]= icm_utils.dashboardUrl(R),
+           ["message"] = "Iguana must be running as a service..."
+         }
+         return t
+      end
+   end  
         
    -- check for trial Iguana ID / license...
    if CheckIndividual(iguana.id()) == true then
@@ -176,10 +175,7 @@ function display.api_status(R,A)
    
    -- check for company Iguana ID with expired maintenance...  test with IguanaID=N7HVNMDTBMUW976T
    local MaintenanceCurrent, Expiry, MaintenanceExpiry, SupportType = CheckExpiry(iguana.id())
-   trace(MaintenanceExpiry)
-   trace(SupportType)
    
-   --if(MaintenanceExpiry == '') then
    if SupportType == 'Suspended' or SupportType == 'Cancelled' or SupportType == 'None' then          
       t = { 
         ["status"]="error",
@@ -191,8 +187,6 @@ function display.api_status(R,A)
    end
    
    if CheckExpiry(iguana.id()) ~= true then
-      --net.http.respond{body=html_templates.Header..ExpiryMessage..html_templates.Footer(R)}
-      --return
       t = { 
         ["status"]="error",
         ["windows"]="yes",
@@ -270,22 +264,27 @@ function display.api_status(R,A)
       versions[i] = version
    end
    
-   if PlatformInfo.os == 'windows' then               
+   if icm_utils.isWindows() then               
       t = { 
             ["status"]="ok",
             ["windows"]="yes",
             ["dashboard_url"]= icm_utils.dashboardUrl(R),
-           ["versions"] = versions     
+            ["versions"] = versions    
           }
    else 
       t = { 
             ["status"]="ok",
             ["dashboard_url"]= icm_utils.dashboardUrl(R),
-           ["versions"] = versions     
+            ["versions"] = versions
           }
    end
-      
-            
+
+   -- check for internet access...
+   local Success, ErrorMessage = pcall(net.http.get, {url="http://dl.interfaceware.com", cache_time=0, live=true})
+   if  Success then
+      t["internet"] ="yes";
+   end
+               
    return t
       
 end

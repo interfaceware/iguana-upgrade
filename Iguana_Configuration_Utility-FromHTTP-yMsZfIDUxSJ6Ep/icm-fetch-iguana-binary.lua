@@ -38,14 +38,22 @@ local function DownloadPath(Version)
          Path = Path..'86.zip'
       end
    else
-      -- TODO only 64 bit linux supported.
-      Path = Path..Version..'_linux_centos5_x64.tar.gz'
+      if  icm_utils.isUbuntu() then
+         Path = Path..Version..'_linux_ubuntu1204_x'
+      else 
+         Path = Path..Version..'_linux_centos5_x'
+      end
+      
+      if icm_utils.is64Bit() then 
+         Path = Path..'64.tar.gz'
+      else
+         Path = Path..'86.tar.gz'
+      end
    end
    return Path  
 end
 
 local function DownloadTarball(Url, Version)
-   -- I use curl to download the tar ball and expand it on the fly using a pipe.
    local filename = Url:match("([^/]+)$")
    local Command = "curl -o '" .. icm_utils.releases() .. filename .. "' " .. Url
    trace(Command)
@@ -69,6 +77,7 @@ local function VerifyTarball(Url, Version)
       local result = os.executeAndCapture("tar -ztvf '".. icm_utils.releases() .. filename .. "' 2>&1")
       local s, e = string.find(result, "Error")
       if s ~= nil and s ~= '' then
+         os.fs.deleteDir{dir=icm_utils.applicationVersion(Version)}
          error("problem with downloaded Iguana binary...")
       end
       trace(result)
@@ -86,7 +95,6 @@ local function UnpackTarball(Url, Version)
 end
 
 local function DownloadAndUnpackTarball(Url, Version)
-   -- I use curl to download the tar ball and expand it on the fly using a pipe.  
    local Command = "curl "..Url.." | tar -zx --strip-components=1 -C "..icm_utils.applicationVersion(Version)
    trace(Command)
    if not iguana.isTest() then 
@@ -103,7 +111,6 @@ local function UnpackDir(T,Dir)
       if type(T[K]) == 'table' then
          UnpackDir(T[K], Dir..'/'..K)
       else
-         --write file
          local F=io.open(Dir..'/'..K, "wb")
          F:write(T[K])
          F:close()
@@ -132,38 +139,66 @@ local function UnpackZip(Url, Version)
    end
 end
 
-local function DownloadAndUnpackZip(Url, Version)
+local function processWindowsIguanaBinary(Url, Version)
    local Dir = icm_utils.applicationVersion(Version)
    local D = net.http.getCached{url=Url,timeout=400}
    if not iguana.isTest() then
-      --local T = filter.zip.inflate(D)
-      local success, T = pcall(filter.zip.inflate, D)
-      if success then
-        UnpackDir(T['iNTERFACEWARE-Iguana'], Dir)
-      else 
-        error("problem with downloaded Iguana binary...")
-      end
-   end
+      T = filter.zip.inflate(D)
+      UnpackDir(T['iNTERFACEWARE-Iguana'], Dir)
+   end  
+end
+
+local function processLinuxIguanaBinary(Url, Version)
+   DownloadTarball(Url, Version)
+   VerifyTarball(Url, Version)
+   UnpackTarball(Url, Version)
 end
 
 function icm_fetch_iguana_binary(R,A)
-   local Version = icm_utils.versionString(R.params.version)
-   icm_utils.create(icm_utils.root())
-   icm_utils.create(icm_utils.application())
-   icm_utils.create(icm_utils.releases())
-   icm_utils.create(icm_utils.applicationVersion(Version))
-   local Url = DownloadPath(Version)
-   if icm_utils.isWindows() then
-      DownloadAndUnpackZip(Url, Version)
-   else 
-      --DownloadAndUnpackTarball(Url, Version)   
-      DownloadTarball(Url, Version)
-      VerifyTarball(Url, Version)
-      UnpackTarball(Url, Version)
+   t={}
+   if not iguana.isTest() then
+      local Version = icm_utils.versionString(R.params.version)
+      icm_utils.create(icm_utils.root())
+      icm_utils.create(icm_utils.application())
+      icm_utils.create(icm_utils.releases())
+      icm_utils.create(icm_utils.applicationVersion(Version))
+      local Url = DownloadPath(Version)
+      if icm_utils.isWindows() then
+         local success, T = pcall(processWindowsIguanaBinary, Url, Version)
+         if success then
+            hdf.create(Version)
+            hdf.changeVerson(Version)
+            t = { 
+               ["status"]="ok" 
+            }       
+         else 
+            local appDir = icm_utils.applicationVersion(Version);
+            os.fs.deleteDir{dir=appDir}
+            t = { 
+              ["status"] = "error",
+              ["windows"] = "yes",
+              ["dashboard_url"] = icm_utils.dashboardUrl(R),
+              ["message"] = "error handling Iguana Windows Distribution binary - " .. T
+            }   
+         end
+      else 
+         local success, T = pcall(processLinuxIguanaBinary, Url, Version)
+         if success then
+            hdf.create(Version)
+            hdf.changeVerson(Version)
+            t = { 
+               ["status"]="ok" 
+            }       
+         else 
+            local appDir = icm_utils.applicationVersion(Version);
+            os.fs.deleteDir{dir=appDir}
+            t = { 
+              ["status"]="error",
+              ["dashboard_url"]= icm_utils.dashboardUrl(R),
+              ["message"] = "error handling Iguana Linux Distribution binary - " .. T
+            }      
+         end      
+      end
    end
-   hdf.create(Version)
-   hdf.changeVerson(Version)
-   -- Old skool HTTP refresh.
-   --display.status(R,A)
-   return { ["status"]="ok" }
+  return t
 end

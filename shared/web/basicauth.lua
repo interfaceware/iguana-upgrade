@@ -34,7 +34,7 @@ function basicauth.isAuthorized(Request)
    if WebInfo.web_config.use_https then
        UrlBase = "https"  
    end
-   iguana.logInfo("Authenticating with ".. Credentials.username..":"..Credentials.password)
+   --iguana.logInfo("Authenticating with ".. Credentials.username..":"..Credentials.password)
    local Status, Code = net.http.post{
       url= UrlBase..'://localhost:'..WebInfo.web_config.port..'/status',
       parameters={username=Credentials.username, password=Credentials.password},

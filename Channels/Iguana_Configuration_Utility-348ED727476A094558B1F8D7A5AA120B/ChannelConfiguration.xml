@@ -10,8 +10,8 @@
    <from_http
       type="mapper"
       guid="Iguana_Configuration_Utility-FromHTTP-yMsZfIDUxSJ6Ep"
-      commit_id="7276cf37d29dc87d211ba24a9d091e4ed61532ed"
-      commit_comment="Added help links."
+      commit_id="86ab6326e4b00fd10f6fa9d998a12fac02863313"
+      commit_comment="Import Translators: Prepping for publish"
       mapper_url_path="update/"/>
    <message_filter
       filter_after_logging="false"

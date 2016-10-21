@@ -142,6 +142,7 @@ local ContentTypeMap = {
    ['.js']  = 'application/x-javascript',
    ['.css'] = 'text/css',
    ['.gif'] = 'image/gif',
+   ['.png'] = 'image/png',
    ['.html'] = 'text/html'
 }
 
@@ -293,7 +294,8 @@ function web.webserver.serveRequest(Self, P)
       local Success, ErrMsg = pcall(ServeRequest, Self, P)
       if (not Success) then
          local ErrObj = {error=ErrMsg}
-         net.http.respond{body=json.serialize{data=ErrObj}, 
+         --net.http.respond{body=json.serialize{data=ErrObj},
+         net.http.respond{body=ErrMsg, 
                           entity_type='text/json',
                           code=500}
       end

@@ -22,7 +22,7 @@
 
 local start   = require 'icm-create-linux-start-script'
 local restart = require 'icm-create-linux-restart-script'
-local install = require 'icm-install-linux-cron'
+
 local display = require 'icm-installation-status'
 
 local MakeScheduledTask = require 'windows.scheduler'
@@ -35,18 +35,13 @@ function icm_iguana_restart(R,A)
    local DotVersion = icm_utils.versionDotString(R.params.version)
    local AppDir = icm_utils.applicationVersion(Version)   
    
-   --if not os.fs.stat(AppDir) then      
-   --   return display.status(R,A)
-   --   --error("This version is not installed.")
-   --end
-   -- We could do more checks for the validity of the install
-   -- we are changing over to.
    local StatusMessage
    if icm_utils.isWindows() then
       local Username = R.params.username
       local Password = R.get_params.password
       local Command = AppDir..'changeversion.bat'
-      local Result = MakeScheduledTask{user=Username, password=Password, command=Command, working_dir=AppDir, delay=2, taskname="iguana_change"}          
+      local IguanaService = icm_utils.getIguanaService(iguana.appDir() .. "iguana_service.hdf")
+      local Result = MakeScheduledTask{user=Username, password=Password, command=Command, working_dir=AppDir, delay=2, taskname=IguanaService.."_change"}          
       if Result:find("SUCCESS") then
          StatusMessage = [[            
             <h2>Activate Iguana Version #DVERSION#:</h2>
@@ -79,16 +74,13 @@ function icm_iguana_restart(R,A)
          StatusMessage = StatusMessage:gsub("#VERSION#", Version)         
       end
    else
-      --start.createScript(Version)
       restart.createScript(Version)
-      --install.cron()
    end
 
    
    if not icm_utils.isWindows() and not iguana.isTest() then
-      -- this does a graceful shut down / restart
-      --local exit_status = os.execute ("(setsid "..icm_utils.root().."/iguana_restart.bash <&- >&- 2>&- & disown)")      
-      local pexit = io.popen("(setsid "..icm_utils.root().."/iguana_restart.bash & disown)")
+      local IguanaService = icm_utils.getIguanaService(iguana.appDir() .. "iguana_service.hdf")    
+      local pexit = io.popen("(setsid "..icm_utils.root().."/"..IguanaService.."_restart.bash & disown)")
       pexit:flush()
       local exit_status = pexit:read()      
       pexit:close()

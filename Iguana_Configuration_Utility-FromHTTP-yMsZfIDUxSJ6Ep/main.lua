@@ -21,20 +21,38 @@
 global_config = require 'icm-config'
 
 require 'icm-api'
+
 require 'icm-webserver'
+require 'icm-upload'
+
+local icm_utils = require 'icm-utils'
+local installMonitorScript = require 'icm-create-linux-monitor-script'
+local installRestartScript = require 'icm-create-linux-restart-script'
+local installCronScript = require 'icm-install-linux-cron'
+
+function init()
+   if icm_utils.isLinux() then
+      local Version = icm_utils.versionString(icm_utils.currentVersion())
+      installMonitorScript.createScript(Version)
+      installRestartScript.createScript(Version)
+      installCronScript.install()
+   end      
+end   
+
+local init =  init()   
 
 local WebServer = web.webserver.create{
    default = 'www/index.html',
-    --test = 'admin',
-      auth = true,
+   --test = 'admin',
+   auth = true,
    actions = { 
-                ["icm-api"] = api
+                ["icm-api"] = api,
+                ["icm-upload"] = upload
              }
 }
 
 function main(Data)
-  WebServer:serveRequest{data=Data}            
+   iguana.stopOnError(false)
+   WebServer:serveRequest{data=Data}            
+
 end
-
-
-

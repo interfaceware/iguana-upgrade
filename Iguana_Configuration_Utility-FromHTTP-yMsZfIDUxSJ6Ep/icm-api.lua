@@ -29,7 +29,7 @@ local display = require 'icm-installation-status'
 local icm_utils = require 'icm-utils'
 
 function api(R,A)   
-
+      
    local Version = R.params.version
    
    if R.params.action == "icm-installation-status" then      
@@ -50,12 +50,32 @@ function api(R,A)
       return t
    elseif R.params.action == "mils-license" then   
       return mils_license(R,A)      
-   elseif R.params.action == "restart-login" then   
-      t = { 
-            ["dashboard_url"]= icm_utils.dashboardUrl(R),
-            ["dversion"] = icm_utils.versionDotString(Version),
-            ["version"] = icm_utils.versionString(Version)
-         }      
+   elseif R.params.action == "restart-login" then
+      local applicationDirectory = icm_utils.applicationVersion(Version);
+      trace(applicationDirectory)
+      local workingDirectory = iguana.workingDir();      
+      local checkLicenseCommand = "(\""..applicationDirectory.."\iguana\" --check_license  \""..workingDirectory.."\" 2>&1)"
+      
+      local pLicenseStatus = io.popen(checkLicenseCommand)
+      pLicenseStatus:flush()
+      local licenseStatus = pLicenseStatus:read('*all')      
+      pLicenseStatus:close()
+      trace(licenseStatus)
+      
+      if licenseStatus:match(".*contract*") then
+         t = { 
+               ["dashboard_url"]= icm_utils.dashboardUrl(R),
+               ["dversion"] = icm_utils.versionDotString(Version),
+               ["version"] = icm_utils.versionString(Version),
+               ["license_status"] = licenseStatus
+            }
+      else
+           t = { 
+               ["dashboard_url"]= icm_utils.dashboardUrl(R),
+               ["dversion"] = icm_utils.versionDotString(Version),
+               ["version"] = icm_utils.versionString(Version),
+            }       
+      end
       return t  
    elseif R.params.action == "icm-iguana-restart" then         
       return icm_iguana_restart(R,A)      

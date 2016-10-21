@@ -17,32 +17,81 @@
 
 local utils = {}
 
-require 'iguana.info'
+function utils.executeAndCapture(cmd)
+  local f = assert(io.popen(cmd, 'r'))
+  local s = assert(f:read('*a'))
+  f:close()
+  return s
+end
 
-local Info = iguana.info()
-
--- Common  routines that say where things are located, OS type etc.  We should be running under the
--- home directory of the Iguana user we are using in Linux.
+function utils.getPlatform()
+   if os.getenv("programfiles") ~= nil then
+      return "windows"       
+   end      
+   local platform = utils.executeAndCapture("uname -a 2>&1")      
+   if(platform:upper()):match(".*LINUX.*") ~= nil then
+      return "linux"
+   elseif(platform:upper()):match(".*DARWIN.*") ~= nil then
+      return "osx"      
+   end
+end
 
 function utils.isWindows()
-   return Info.os == "windows"
+   return utils.getPlatform() == "windows"
 end
 
 function utils.isLinux()
-   return Info.os == "linux"
+   return utils.getPlatform() == "linux"
 end
 
 function utils.is64Bit()
-   return Info.cpu == '64bit'
+   if utils.isWindows() then
+      if os.getenv("ProgramW6432") ~= nil then
+         return true
+      else       
+         return false
+      end
+   elseif utils.isLinux() then
+      local platform = utils.executeAndCapture("uname -a 2>&1")
+      if(platform:upper()):match(".*X86_64*") ~= nil then
+         return true;
+      else 
+         return false
+      end         
+   end
 end
 
 function utils.is32Bit()
-   return Info.cpu == '32bit'
+   return not utils.is64Bit()
+end
+
+function utils.isUbuntu()
+   local platform = utils.executeAndCapture("uname -a 2>&1")
+   if(platform:upper()):match(".*UBUNTU*") ~= nil then
+      return true;
+   else 
+      return false
+   end
+ end
+
+function utils.isCentos()
+   local platform = utils.executeAndCapture("uname -a 2>&1")
+   if(platform:upper()):match(".*CENTOS*") ~= nil then
+      return true;
+   else 
+      return false
+   end
+ end
+
+function utils.getProgramFilesDirectory()
+   local programFilesDirectory = os.getenv('ProgramFiles')
+   programFilesDirectory = programFilesDirectory:gsub("\\", "/")   
+   return programFilesDirectory
 end
 
 function utils.root()
    if utils.isWindows() then
-      return os.getenv('ProgramFiles')..'/iNTERFACEWARE/'      
+      return utils.getProgramFilesDirectory()..'/iNTERFACEWARE/'      
    else 
       return os.getenv('HOME')..'/'
    end
@@ -50,17 +99,18 @@ end
 
 function utils.application()
    if utils.isWindows() then
-      return os.getenv('ProgramFiles')..'/iNTERFACEWARE/Iguana-6/'      
+      return utils.getProgramFilesDirectory()..'/iNTERFACEWARE/'..utils.getIguanaService()..'-6/'      
    else 
-      return os.getenv('HOME')..'/Iguana-6/'
+      return os.getenv('HOME')..'/'..utils.getIguanaService()..'-6/'
    end
 end
 
 function utils.releases()
+   trace(ProgramFilesDirectory)
    if utils.isWindows() then
-      return os.getenv('ProgramFiles')..'/iNTERFACEWARE/Iguana-6/Releases/'      
+      return utils.getProgramFilesDirectory()..'/iNTERFACEWARE/'..utils.getIguanaService()..'-6/Releases/'      
    else 
-      return os.getenv('HOME')..'/Iguana-6/Releases/'
+      return os.getenv('HOME')..'/'..utils.getIguanaService()..'-6/Releases/'
    end
 end
 
@@ -111,4 +161,38 @@ function utils.dashboardUrl(R)
    end
 end
 
+function utils.UnpackDir(T,Dir)
+   if os.fs.stat(Dir) == nil then
+      os.fs.mkdir(Dir)
+   end
+   for K in pairs(T) do
+      trace(K)
+      if type(T[K]) == 'table' then
+         utils.UnpackDir(T[K], Dir..'/'..K)
+      else
+         local F=io.open(Dir..'/'..K, "wb")
+         F:write(T[K])
+         F:close()
+      end
+   end
+end
+
+function utils.readFile(filename)
+    local f = io.open(filename, "r")
+    local content = f:read("*all")
+    f:close()
+    return content
+end
+
+function utils.getIguanaService()
+   local IguanaService = utils.readFile(iguana.appDir() .. "iguana_service.hdf")
+   IguanaService = string.gsub(IguanaService, ".*service_name=([^\n]*).*", "%1")   
+   return IguanaService
+end
+
+function utils.fileExists(name)
+   local f=io.open(name,"r")
+   if f~=nil then io.close(f) return true else return false end
+end
+   
 return utils

@@ -108,7 +108,7 @@ div.home {
 
    
 h1 {
-   font-weight: 300;
+   font-weight: 600;
    color: #82C341;
    margin: 0px 0px 10px 0px;
    padding-bottom: 20px;
@@ -207,6 +207,8 @@ a.button {
     white-space: nowrap;
 }
 
+
+
 div.status {
    box-shadow: inset 0px 1px 2px 0px rgba(0,0,0,0.5);
    background: #f5f5f5;
@@ -223,20 +225,7 @@ input[type=text], input[type=password] {
    padding: 5px 10px;
 }
 
-input[type=submit] {
-    font-size: 14px;
-    line-height: 20px;
-    background-color: #82bf56;
-    border-left: medium none;
-    border-right: medium none;
-    border-top: medium none;
-    border-bottom: 2px solid #669644;
-    text-shadow: 0 -1px #669644;
-    border-radius: 3px;
-    color: #ffffff;
-    cursor: pointer;
-    font-family: "Open Sans",sans-serif;
-    padding: 5px 20px;
-    text-decoration: none;
-    white-space: nowrap;
+
+input[type=file] {
+   position: relative;
 }
